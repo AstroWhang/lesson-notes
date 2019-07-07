@@ -1,58 +1,37 @@
 import React, {useState, useEffect} from 'react';
 import { config } from '../config';
+import { Link } from 'react-router-dom';
 import '../App.css';
 
 function Shop() {
 
-  // var https = require('https');
-
-  // var options = {
-  //   'method': 'GET',
-  //   'hostname': 'fortnite-api.theapinetwork.com',
-  //   'path': '/store/get',
-  //   'headers': {
-  //     'Authorization': `${config.AUTH_TOKEN}`
-  //   }
-  // };
-
-  // var req = https.request(options, function (res) {
-  //   var chunks = [];
-
-  //   res.on("data", function (chunk) {
-  //     chunks.push(chunk);
-  //   });
-
-  //   res.on("end", function (chunk) {
-  //     var body = Buffer.concat(chunks);
-  //     console.log(body.toString());
-  //   });
-
-  //   res.on("error", function (error) {
-  //     console.error(error);
-  //   });
-  // });
-
-  // req.end();
-
   useEffect(() => {
-    
+    fetchItems();
   }, []);
 
   const [items, setItems] = useState([]);
 
   const fetchItems = async () => {
-    const data = await fetch(req);
+
+    const data = await fetch('https://fortnite-api.theapinetwork.com/upcoming/get', {
+      'headers': {
+        'authorization': `${config.AUTH_TOKEN}`
+      }
+    });
 
     const items = await data.json();
-    console.log(items);
-
-    setItems(items);
-
-  }
+    console.log(items.data)
+    setItems(items.data);
+  };
 
   return ( 
-    <div className="shop">
+    <div>
       <h3>Shop Page</h3>
+      {items.map(item => (
+        <h6 key={item.itemId}>
+          <Link to={`/shop/${item.itemId}`}>{item.item.name}</Link>
+        </h6>
+      ))}
     </div>
   );
 }
